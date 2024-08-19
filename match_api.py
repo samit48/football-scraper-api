@@ -7,17 +7,12 @@ import datetime
 
 app = Flask(__name__)
 
-
-#function to get the json from the web scraper
+# function gets specific date to get match info
+# returns the matches in a dictionary from the web scraper
 def fetch_matchs(date_value):
 
-    url = f"https://fbref.com/en/matches/{date_value}"
+    url = f"https://fbref.com/en/matches/{date_value}"    
 
-    print()
-    print(url)
-    
-
-        
     response = requests.get(url, headers={"user-agent" : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"})
 
 
@@ -45,6 +40,7 @@ def fetch_matchs(date_value):
             game_week = game_week_cell.get_text(strip=True) if game_week_cell else "Null"
 
             for match_row in match_rows:
+                # Gets all the info needed
                 home_team_cell = match_row.find('td', {'data-stat': 'home_team'})
                 away_team_cell = match_row.find('td', {'data-stat': 'away_team'})
                 time_cell = match_row.find('td', {'data-stat': 'start_time'})
@@ -71,25 +67,26 @@ def fetch_matchs(date_value):
                 
             if matches:
                 all_matches[league] = matches
-    print()
-    print(all_matches)
-    print()
+
     return all_matches
 
 
-
+# route for the /matches endpoint that responds to HTTP GET requests
 @app.route("/matches", methods=["GET"])
+
+# gets the match data through matchs and returns a json file
 def get_matches():
     date = request.args.get("date", None)
 
+    #if user doesn't input specifc date, use todays date
     if date:
         date_value = date
     else:
         date_today = datetime.datetime.now()
         date_value = date_today.strftime("%Y-%m-%d")
 
-    print(date_value)
     matches = fetch_matchs(date_value)
+
     return jsonify(matches)
 
 
