@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 # function gets specific date to get match info
 # returns the matches in a dictionary from the web scraper
-def fetch_matchs(date_value):
+def fetch_matches(date_value):
 
     url = f"https://fbref.com/en/matches/{date_value}"    
 
@@ -85,7 +85,7 @@ def get_matches():
         date_today = datetime.datetime.now()
         date_value = date_today.strftime("%Y-%m-%d")
 
-    matches = fetch_matchs(date_value)
+    matches = fetch_matches(date_value)
 
     return jsonify(matches)
 
